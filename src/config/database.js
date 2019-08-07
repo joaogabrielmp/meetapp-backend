@@ -1,7 +1,7 @@
 module.exports = {
   dialect: 'postgres',
   host: 'localhost',
-  username: 'meetapp-pg',
+  username: 'postgres',
   password: 'meetapp',
   database: 'meetapp',
   define: {
