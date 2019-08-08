@@ -46,6 +46,33 @@ class MeetupController {
     if (!(await schema.isValid(req.body))) {
       return res.status(400).json({ error: 'Validation fails' });
     }
+
+    const { id } = req.params;
+    const { date } = req.body;
+
+    const meetup = await Meetup.findByPk(id);
+
+    if (!meetup) {
+      return res.status(400).json({ error: 'Meetup not found' });
+    }
+
+    if (meetup.user_id !== req.userId) {
+      return res.status(400).json({ error: 'User must be meetup organizer' });
+    }
+
+    if (isBefore(parseISO(date), new Date())) {
+      return res.status(400).json({
+        error: 'Meetup date must be equal to or greater current date',
+      });
+    }
+
+    if (meetup.past) {
+      return res.status(400).json({ error: 'Meetup already ended.' });
+    }
+
+    await meetup.update(req.body);
+
+    return res.json(meetup);
   }
 }
 
