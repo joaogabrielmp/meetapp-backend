@@ -33,6 +33,20 @@ class MeetupController {
 
     return res.json({ id, title, description, location, date, user_id });
   }
+
+  async update(req, res) {
+    const schema = Yup.object().shape({
+      title: Yup.string(),
+      description: Yup.string(),
+      location: Yup.string(),
+      date: Yup.date(),
+      banner_id: Yup.number(),
+    });
+
+    if (!(await schema.isValid(req.body))) {
+      return res.status(400).json({ error: 'Validation fails' });
+    }
+  }
 }
 
 export default new MeetupController();
