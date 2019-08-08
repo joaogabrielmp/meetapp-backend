@@ -9,7 +9,7 @@ class MeetappController {
       description: Yup.string().required(),
       location: Yup.string().required(),
       date: Yup.date().required(),
-      file_id: Yup.number().required(),
+      banner_id: Yup.number().required(),
     });
 
     if (!(await schema.isValid(req.body))) {
@@ -19,15 +19,17 @@ class MeetappController {
     const { date } = req.body;
 
     if (isBefore(parseISO(date), new Date())) {
-      return res.status(400).json({ error: 'Past dates are not permitted' });
+      return res.status(400).json({
+        error: 'Meetapp date must be equal to or greater current date',
+      });
     }
 
     const user_id = req.userId;
 
-    const { id, title, description, location } = await Meetapp.create(
+    const { id, title, description, location } = await Meetapp.create({
       ...req.body,
-      user_id
-    );
+      user_id,
+    });
 
     return res.json({ id, title, description, location, date, user_id });
   }
