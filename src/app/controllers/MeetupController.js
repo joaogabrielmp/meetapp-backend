@@ -104,7 +104,7 @@ class MeetupController {
       return res.status(400).json({ error: 'Meetup already ended.' });
     }
 
-    await meetup.destroy(id);
+    await meetup.destroy();
 
     return res.json({ message: 'Meetup canceled' });
   }
