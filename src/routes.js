@@ -6,6 +6,7 @@ import multerConfig from './config/multer';
 import UserController from './app/controllers/UserController';
 import SessionController from './app/controllers/SessionController';
 import FileController from './app/controllers/FileController';
+import MeetappController from './app/controllers/MeetappController';
 
 import authMiddlare from './app/middlewares/auth';
 
