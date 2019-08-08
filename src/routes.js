@@ -22,4 +22,6 @@ routes.put('/users', UserController.update);
 
 routes.post('/files', upload.single('file'), FileController.store);
 
+routes.post('/meetapps', MeetappController.store);
+
 export default routes;
