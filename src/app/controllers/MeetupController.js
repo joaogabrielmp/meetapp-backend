@@ -1,8 +1,8 @@
 import * as Yup from 'yup';
 import { isBefore, parseISO } from 'date-fns';
-import Meetapp from '../models/Meetapp';
+import Meetup from '../models/Meetup';
 
-class MeetappController {
+class MeetupController {
   async store(req, res) {
     const schema = Yup.object().shape({
       title: Yup.string().required(),
@@ -20,13 +20,13 @@ class MeetappController {
 
     if (isBefore(parseISO(date), new Date())) {
       return res.status(400).json({
-        error: 'Meetapp date must be equal to or greater current date',
+        error: 'Meetup date must be equal to or greater current date',
       });
     }
 
     const user_id = req.userId;
 
-    const { id, title, description, location } = await Meetapp.create({
+    const { id, title, description, location } = await Meetup.create({
       ...req.body,
       user_id,
     });
@@ -35,4 +35,4 @@ class MeetappController {
   }
 }
 
-export default new MeetappController();
+export default new MeetupController();

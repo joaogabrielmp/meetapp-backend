@@ -1,7 +1,7 @@
 import Sequelize, { Model } from 'sequelize';
 import { isBefore } from 'date-fns';
 
-class Meetapp extends Model {
+class Meetup extends Model {
   static init(sequelize) {
     super.init(
       {
@@ -30,4 +30,4 @@ class Meetapp extends Model {
   }
 }
 
-export default Meetapp;
+export default Meetup;
