@@ -86,6 +86,28 @@ class MeetupController {
 
     return res.json(meetup);
   }
+
+  async delete(req, res) {
+    const { id } = req.params;
+
+    const meetup = await Meetup.findByPk(id);
+
+    if (!meetup) {
+      return res.status(400).json({ error: 'Meetup not found' });
+    }
+
+    if (meetup.user_id !== req.userId) {
+      return res.status(400).json({ error: 'User must be meetup organizer' });
+    }
+
+    if (meetup.past) {
+      return res.status(400).json({ error: 'Meetup already ended.' });
+    }
+
+    await meetup.destroy(id);
+
+    return res.json({ message: 'Meetup canceled' });
+  }
 }
 
 export default new MeetupController();
