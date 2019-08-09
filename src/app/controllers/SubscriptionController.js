@@ -26,10 +26,36 @@ class SubscriptionController {
       const subscription = await Subscription.findOne({ where: { meetup_id } });
 
       if (subscription && subscription.user_id === req.userId) {
-        return res.status(400).json({ error: 'User already subscription' });
+        return res.status(400).json({ error: 'User already subscribed' });
       }
 
-      return res.json({ a: '1' });
+      const sameDate = await Subscription.findOne({
+        where: {
+          user_id: req.userId,
+        },
+        include: [
+          {
+            model: Meetup,
+            required: true,
+            where: {
+              date: meetup.date,
+            },
+          },
+        ],
+      });
+
+      if (sameDate) {
+        return res.status(400).json({
+          error: 'User cannot subscribe to two meetups with the same date.',
+        });
+      }
+
+      const { id, user_id } = await Subscription.create({
+        meetup_id,
+        user_id: req.userId,
+      });
+
+      return res.json({ id, meetup_id, user_id });
     } catch (error) {
       return res
         .status(400)
