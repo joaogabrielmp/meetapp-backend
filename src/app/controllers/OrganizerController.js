@@ -3,7 +3,14 @@ import Meetup from '../models/Meetup';
 class OrganizerController {
   async index(req, res) {
     try {
-      const meetups = await Meetup.findAll({ where: { user_id: req.userId } });
+      const user_id = req.userId;
+
+      const meetups = await Meetup.findAll({ where: { user_id } });
+
+      if (!meetups) {
+        return res.status(400).json({ error: 'Meetup not found' });
+      }
+
       return res.json(meetups);
     } catch (error) {
       return res
