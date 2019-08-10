@@ -2,6 +2,16 @@ import Subscription from '../models/Subscription';
 import Meetup from '../models/Meetup';
 
 class SubscriptionController {
+  async index(req, res) {
+    try {
+      return res.json({ ok: true });
+    } catch (error) {
+      return res
+        .status(400)
+        .json({ error: 'An unexpected error has occurred. Try again' });
+    }
+  }
+
   async store(req, res) {
     try {
       const { meetup_id } = req.params;
