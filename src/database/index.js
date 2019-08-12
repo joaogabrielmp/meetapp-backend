@@ -13,13 +13,18 @@ class Database {
   constructor() {
     this.connection = new Sequelize(databaseConfig);
 
-    this.init();
+    this.connections();
+    this.associations();
   }
 
-  init() {
-    models
-      .map(model => model.init(this.connection))
-      .map(model => model.associate && model.associate(this.connection.models));
+  connections() {
+    models.forEach(model => model.init(this.connection));
+  }
+
+  associations() {
+    models.forEach(
+      model => model.associate && model.associate(this.connection.models)
+    );
   }
 }
 
