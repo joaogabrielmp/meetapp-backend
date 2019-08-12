@@ -1,17 +1,18 @@
 import * as Yup from 'yup';
 import { Op } from 'sequelize';
-import { isBefore, parseISO, parse, startOfDay, endOfDay } from 'date-fns';
+import { isBefore, parseISO, startOfDay, endOfDay } from 'date-fns';
 import Meetup from '../models/Meetup';
 import User from '../models/User';
 
 class MeetupController {
   async index(req, res) {
     try {
-      const page = req.params.page || 1;
+      const page = req.query.page || 1;
       const where = {};
 
-      if (req.params.date) {
-        const date = parse(req.params.date);
+      if (req.query.date) {
+        const date = parseISO(req.query.date);
+
         where.date = {
           [Op.between]: [startOfDay(date), endOfDay(date)],
         };
@@ -24,15 +25,11 @@ class MeetupController {
         offset: 10 * page - 10,
       });
 
-      if (!meetups) {
-        return res.status(400).json({ error: 'Meetup not found' });
-      }
-
       return res.json(meetups);
     } catch (error) {
       return res
         .status(400)
-        .json({ error: 'An unexpected error has occurred. Try again' });
+        .json({ error1: 'An unexpected error has occurred. Try again', error });
     }
   }
 
