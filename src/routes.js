@@ -1,6 +1,5 @@
 import { Router } from 'express';
 import multer from 'multer';
-
 import multerConfig from './config/multer';
 
 import UserController from './app/controllers/UserController';
@@ -29,8 +28,10 @@ routes.post('/meetups', MeetupController.store);
 routes.put('/meetups/:id', MeetupController.update);
 routes.delete('/meetups/:id', MeetupController.delete);
 
-routes.post('/subscriptions/:meetup_id', SubscriptionController.store);
-
 routes.get('/organizer', OrganizerController.index);
+
+routes.get('/subscriptions', SubscriptionController.index);
+
+routes.post('/meetups/:meetup_id/subscriptions', SubscriptionController.store);
 
 export default routes;
