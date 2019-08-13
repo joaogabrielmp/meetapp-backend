@@ -9,95 +9,83 @@ import SubscriptionMail from '../jobs/SubscriptionMail';
 
 class SubscriptionController {
   async index(req, res) {
-    try {
-      const subscriptions = await Subscription.findAll({
-        where: {
-          user_id: req.userId,
-        },
-        include: [
-          {
-            model: Meetup,
-            required: true,
-            where: {
-              date: { [Op.gt]: new Date() },
-            },
+    const subscriptions = await Subscription.findAll({
+      where: {
+        user_id: req.userId,
+      },
+      include: [
+        {
+          model: Meetup,
+          required: true,
+          where: {
+            date: { [Op.gt]: new Date() },
           },
-        ],
-        order: [[Meetup, 'date']],
-      });
+        },
+      ],
+      order: [[Meetup, 'date']],
+    });
 
-      return res.json(subscriptions);
-    } catch (error) {
-      return res
-        .status(400)
-        .json({ error: 'An unexpected error has occurred. Try again' });
-    }
+    return res.json(subscriptions);
   }
 
   async store(req, res) {
-    try {
-      const user = await User.findByPk(req.userId);
-      const { meetup_id } = req.params;
+    const user = await User.findByPk(req.userId);
+    const { meetup_id } = req.params;
 
-      const meetup = await Meetup.findByPk(meetup_id);
+    const meetup = await Meetup.findByPk(meetup_id);
 
-      if (!meetup) {
-        return res.status(400).json({ error: 'Meetup not found' });
-      }
+    if (!meetup) {
+      return res.status(400).json({ error: 'Meetup not found' });
+    }
 
-      if (meetup.user_id === req.userId) {
-        return res
-          .status(400)
-          .json({ error: 'User must not be meetup organizer' });
-      }
-
-      if (meetup.past) {
-        return res.status(400).json({ error: 'Meetup already ended.' });
-      }
-
-      const subscription = await Subscription.findOne({ where: { meetup_id } });
-
-      if (subscription && subscription.user_id === req.userId) {
-        return res.status(400).json({ error: 'User already subscribed' });
-      }
-
-      const sameDate = await Subscription.findOne({
-        where: {
-          user_id: req.userId,
-        },
-        include: [
-          {
-            model: Meetup,
-            required: true,
-            where: {
-              date: meetup.date,
-            },
-          },
-        ],
-      });
-
-      if (sameDate) {
-        return res.status(400).json({
-          error: 'User cannot subscribe to two meetups with the same date.',
-        });
-      }
-
-      const { id, user_id } = await Subscription.create({
-        meetup_id,
-        user_id: req.userId,
-      });
-
-      await Queue.add(SubscriptionMail.key, {
-        meetup,
-        user,
-      });
-
-      return res.json({ id, meetup_id, user_id });
-    } catch (error) {
+    if (meetup.user_id === req.userId) {
       return res
         .status(400)
-        .json({ error: 'An unexpected error has occurred. Try again' });
+        .json({ error: 'User must not be meetup organizer' });
     }
+
+    if (meetup.past) {
+      return res.status(400).json({ error: 'Meetup already ended.' });
+    }
+
+    const subscription = await Subscription.findOne({ where: { meetup_id } });
+
+    if (subscription && subscription.user_id === req.userId) {
+      return res.status(400).json({ error: 'User already subscribed' });
+    }
+
+    const sameDate = await Subscription.findOne({
+      where: {
+        user_id: req.userId,
+      },
+      include: [
+        {
+          model: Meetup,
+          required: true,
+          where: {
+            date: meetup.date,
+          },
+        },
+      ],
+    });
+
+    if (sameDate) {
+      return res.status(400).json({
+        error: 'User cannot subscribe to two meetups with the same date.',
+      });
+    }
+
+    const { id, user_id } = await Subscription.create({
+      meetup_id,
+      user_id: req.userId,
+    });
+
+    await Queue.add(SubscriptionMail.key, {
+      meetup,
+      user,
+    });
+
+    return res.json({ id, meetup_id, user_id });
   }
 }
 

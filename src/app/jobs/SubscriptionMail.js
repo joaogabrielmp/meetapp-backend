@@ -9,11 +9,11 @@ class SubscriptionMail {
     const { meetup, user } = data;
 
     await Mail.sendMail({
-      to: `${meetup.User.name} <${meetup.User.email}>`,
+      to: `${user.name} <${user.email}>`,
       subject: `[${meetup.title}] Nova meetup`,
       template: 'subscription',
       context: {
-        organizer: meetup.User.name,
+        organizer: user.name,
         meetup: meetup.title,
         user: user.name,
         email: user.email,
