@@ -1,4 +1,5 @@
 import Meetup from '../models/Meetup';
+import File from '../models/File';
 
 class OrganizerController {
   async index(req, res) {
@@ -6,6 +7,7 @@ class OrganizerController {
 
     const meetups = await Meetup.findAll({
       where: { user_id },
+      include: [{ model: File, attributes: ['id', 'path', 'url'] }],
       order: [['date', 'ASC']],
     });
 
