@@ -87,6 +87,18 @@ class SubscriptionController {
 
     return res.json({ id, meetup_id, user_id });
   }
+
+  async delete(req, res) {
+    const subscription = await Subscription.findByPk(req.params.id);
+
+    if (!subscription) {
+      return res.status(400).json({ error: 'Subscription not found' });
+    }
+
+    await subscription.destroy();
+
+    return res.send();
+  }
 }
 
 export default new SubscriptionController();
