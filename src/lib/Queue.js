@@ -1,9 +1,9 @@
 import Bee from 'bee-queue';
-// import * as Sentry from '@sentry/node';
-// import sentryConfig from '../config/sentry';
+import * as Sentry from '@sentry/node';
+import sentryConfig from '../config/sentry';
 import SubscriptionMail from '../app/jobs/SubscriptionMail';
 
-// Sentry.init(sentryConfig);
+Sentry.init(sentryConfig);
 
 const jobs = [SubscriptionMail];
 
@@ -45,7 +45,7 @@ class Queue {
       console.log(`Queue ${job.queue.name}: FAILED`, err);
     }
 
-    // Sentry.captureException(err);
+    Sentry.captureException(err);
   }
 }
 
