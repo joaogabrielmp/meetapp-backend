@@ -23,6 +23,7 @@ class SubscriptionController {
             date: { [Op.gt]: new Date() },
           },
           include: [
+            { model: User },
             { model: File, as: 'file', attributes: ['id', 'path', 'url'] },
           ],
         },
