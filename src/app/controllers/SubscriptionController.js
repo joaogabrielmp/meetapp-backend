@@ -14,6 +14,7 @@ class SubscriptionController {
       where: {
         user_id: req.userId,
       },
+      attributes: ['id'],
       include: [
         {
           model: Meetup,
